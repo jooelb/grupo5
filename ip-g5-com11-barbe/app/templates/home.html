@@ -1,0 +1,75 @@
+{% extends 'header.html' %} 
+
+{% block content %}
+<main>
+    <h1 class="text-center">Buscador Rick & Morty</h1>
+
+    <!-- Selector de página -->
+    <div class="d-flex justify-content-end" style="margin-bottom: 1%; margin-right: 2rem;">
+        <nav aria-label="Paginación">
+            <ul class="pagination">
+                <li class="page-item disabled">
+                    <a class="page-link">⬅️</a>
+                </li>
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">2</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">3</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">➡️</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Buscador del sitio -->
+    <div class="d-flex justify-content-center" style="margin-bottom: 1%">
+        <form class="d-flex" action="{% url 'buscar' %}" method="POST">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" name="query" placeholder="Escribí una palabra" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Buscar</button>
+        </form>
+    </div>
+
+    <!-- Tarjetas de personajes -->
+    <!-- Tarjetas de personajes -->
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% if images|length == 0 %}
+    <h2 class="text-center">La búsqueda no arrojó resultados...</h2>
+    {% else %}
+    {% for img in images %}
+    <div class="col">
+        <div class="card h-100 
+                    {% if img.status == 'Alive' %} card-border-alive
+                    {% elif img.status == 'Dead' %} card-border-dead
+                    {% else %} card-border-unknown
+                    {% endif %}" 
+             style="max-width: 18rem;">
+            <img src="{{ img.image }}" class="card-img-top" alt="{{ img.name }}">
+            <div class="card-body">
+                <h5 class="card-title text-center">{{ img.name }}</h5>
+                <p class="card-text">
+                    <strong>
+                        {% if img.status == 'Alive' %} 🟢 {{ img.status }} 
+                        {% elif img.status == 'Dead' %} 🔴 {{ img.status }} 
+                        {% else %} 🟠 {{ img.status }} 
+                        {% endif %}
+                    </strong>
+                </p>
+                <p class="card-text"><small>Última ubicación: {{ img.location.name }}</small></p>
+                <p class="card-text"><small>Episodio inicial: {{ img.first_seen }}</small></p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+    
+</main>
+{% endblock %}
